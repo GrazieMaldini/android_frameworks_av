@@ -389,6 +389,15 @@ audio_devices_t Engine::getDeviceForStrategyInt(legacy_strategy strategy,
     case STRATEGY_REROUTING:
     case STRATEGY_MEDIA: {
         uint32_t device2 = AUDIO_DEVICE_NONE;
+
+        if (isInCall() && (device == AUDIO_DEVICE_NONE)) {
+            // when in call, get the device for Phone strategy
+            device = getDeviceForStrategyInt(
+                    STRATEGY_PHONE, availableOutputDevices, availableInputDevices, outputs,
+                    outputDeviceTypesToIgnore);
+            break;
+        }
+
         if (strategy != STRATEGY_SONIFICATION) {
             // no sonification on remote submix (e.g. WFD)
             if (availableOutputDevices.getDevice(AUDIO_DEVICE_OUT_REMOTE_SUBMIX,
